@@ -7,6 +7,4 @@ services:
     startCommand: "node index.js"
     envVars:
       - key: NODE_VERSION
-        value: 18.20.0
-      - key: NPM_CONFIG_ENGINE_STRICT
-        value: "false"
+        value: 20.x
