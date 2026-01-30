@@ -3,12 +3,10 @@ services:
     name: natty-xmd
     env: node
     plan: free
-    buildCommand: npm install --legacy-peer-deps
-    startCommand: node index.js
+    buildCommand: "npm install --legacy-peer-deps"
+    startCommand: "node index.js"
     envVars:
       - key: NODE_VERSION
-        value: 18.16.0
-      - key: BOT_NAME
-        value: NATTY XMD
-      - key: PREFIX
-        value: "."
+        value: 18.20.0
+      - key: NPM_CONFIG_ENGINE_STRICT
+        value: "false"
