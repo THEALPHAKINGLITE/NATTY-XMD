@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://i.pinimg.com/originals/db/6b/9f/db6b9f8753232049d97f6c38b2f9f8e4.jpg" width="220" height="220" style="border-radius: 50%; border: 8px double #ff69b4; box-shadow: 0 0 20px #ffb6c1;">
+  <img src="https://files.catbox.moe/2g5kxt.png" width="220" height="220" style="border-radius: 50%; border: 8px double #ff69b4; box-shadow: 0 0 20px #ffb6c1;">
   
   <h1>✨ 🎀 𝒩𝒶𝓉𝓉𝓎 𝒳𝑀𝒟 𝒱𝟥 🎀 ✨</h1>
 
