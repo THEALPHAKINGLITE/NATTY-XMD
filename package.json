@@ -35,3 +35,17 @@
     "qrcode": "^1.5.3",
     "moment-timezone": "^0.5.43"
   },
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "whatsapp",
+    "bot",
+    "multi-device",
+    "baileys",
+    "natty-xmd",
+    "malvin-xd"
+  ],
+  "author": "Malvin King",
+  "license": "MIT"
+}
