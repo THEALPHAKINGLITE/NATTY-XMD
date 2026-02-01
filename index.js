@@ -1,7 +1,9 @@
+
+
 const express = require('express');
+const app = express(); // Router ki jagah App banaya
 const fs = require('fs-extra');
 const path = require('path');
-const router = express.Router();
 const pino = require('pino');
 const {
     default: makeWASocket,
@@ -16,6 +18,7 @@ const { sms } = require('./msg');
 const config = require('./config');
 const plugins = new Map();
 const __path = process.cwd();
+const PORT = process.env.PORT || 8000;
 
 // --- DB INITIALIZATION ---
 const dbDir = path.join(__path, 'database');
@@ -45,8 +48,9 @@ function loadPlugins() {
     }
 }
 
-async function EmpirePair(number, res) {
-    const sanitizedNumber = number.replace(/[^0-9]/g, '');
+// --- MAIN BOT FUNCTION ---
+async function NattyBot(number, res) {
+    const sanitizedNumber = number ? number.replace(/[^0-9]/g, '') : config.OWNER_NUMBER;
     const { state, saveCreds } = await useMultiFileAuthState(path.join(__path, 'session', `session_${sanitizedNumber}`));
 
     const socket = makeWASocket({
@@ -112,7 +116,9 @@ async function EmpirePair(number, res) {
             let cmd = args.shift().toLowerCase();
 
             if (plugins.has(cmd)) {
-                await plugins.get(cmd).execute(socket, m, args, { prefix, isDev, isPremium });
+                try {
+                    await plugins.get(cmd).execute(socket, m, args, { prefix, isDev, isPremium });
+                } catch (err) { console.error(err); }
             } 
             else if (cmd === 'menu' || cmd === 'natty') {
                 const settings = JSON.parse(fs.readFileSync(settingsPath));
@@ -133,7 +139,7 @@ async function EmpirePair(number, res) {
                     image: { url: img },
                     caption: menuCaption,
                     mentions: [m.sender],
-                    footer: "Natty XMD • Malvin Tech",
+                    footer: "Natty XMD • ALPHA Tech",
                     contextInfo: {
                         externalAdReply: {
                             title: "NATTY XMD V3",
@@ -158,13 +164,44 @@ async function EmpirePair(number, res) {
         }
     });
 
+    // --- PAIRING CODE LOGIC ---
     if (!socket.authState.creds.registered) {
-        await delay(1500);
-        const code = await socket.requestPairingCode(sanitizedNumber);
-        if (!res.headersSent) res.send({ code });
+        if (res) {
+            await delay(1500);
+            try {
+                const code = await socket.requestPairingCode(sanitizedNumber);
+                if (!res.headersSent) res.json({ code });
+            } catch (e) {
+                if (!res.headersSent) res.json({ error: 'Pairing Failed' });
+            }
+        }
     }
 }
 
-router.get('/', async (req, res) => { if (req.query.number) await EmpirePair(req.query.number, res); });
+// --- SERVER ROUTES ---
+app.use(express.json());
+
+// 1. Root Route: Serve main.html
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'main.html'));
+});
+
+// 2. Code Generation Route
+app.get('/code', async (req, res) => {
+    if (req.query.number) {
+        await NattyBot(req.query.number, res);
+    } else {
+        res.json({ error: 'Number required' });
+    }
+});
+
+// Start Server
 loadPlugins();
-module.exports = router;
+app.listen(PORT, () => {
+    console.log(`✅ NATTY XMD Server Running on Port ${PORT}`);
+});
+
+module.exports = app;
+
+
+
